@@ -8,6 +8,10 @@
 % 3) posterior mean
 %
 
+% Some constants
+%
+dtheta = 0.01;
+
 % Generative process
 % flip coin; probability of getting heads is theta
 %
@@ -36,15 +40,13 @@ fprintf('p(0.3) = %e\n', prior(0.3));
 % marginalize over theta to find P(d)
 % note that p(theta) is a PDF => we "integrate" (numerically)
 %
-marginalize = @(d, dtheta) sum(arrayfun(@(theta) likelihood(d, theta) * prior(theta) * dtheta, 0:dtheta:1));
-fprintf('P(d) = %e (dtheta = 0.01)\n', marginalize(d, 0.01));
-fprintf('P(d) = %e (dtheta = 0.001)\n', marginalize(d, 0.001));
-fprintf('P(d) = %e (dtheta = 0.0001)\n', marginalize(d, 0.0001));
+marginalize = @(d) sum(arrayfun(@(theta) likelihood(d, theta) * prior(theta) * dtheta, 0:dtheta:1));
+fprintf('P(d) = %e\n', marginalize(d));
 
 % find the posterior p(theta | d)
 % note it's a PDF
 %
-posterior = @(theta, d) likelihood(d, theta) * prior(theta) / marginalize(d, 0.01);
+posterior = @(theta, d) likelihood(d, theta) * prior(theta) / marginalize(d);
 
 fprintf('p(0.5 | d) = %e\n', posterior(0.5, d));
 fprintf('p(0.3 | d) = %e\n', posterior(0.3, d));
@@ -72,8 +74,7 @@ fprintf('max a posteriori theta = %e\n', theta_map);
 
 % Posterior mean to find best theta
 %
-posterior_mean = @(dtheta) sum(arrayfun(@(theta) theta * posterior(theta, d) * dtheta, 0:dtheta:1));
-theta_postmean = posterior_mean(0.01);
+theta_postmean = sum(arrayfun(@(theta) theta * posterior(theta, d) * dtheta, 0:dtheta:1));
 
 fprintf('posterior mean theta = %e\n', theta_postmean);
 
