@@ -27,6 +27,7 @@ fprintf('P(d | 0.3) = %e\n', likelihood(d, 0.3));
 % note it's a PDF
 %
 prior = @(theta) 1; % uniform prior
+%prior = @(theta) betapdf(theta, 10, 10); % alterantive -- Beta distribution, as if we've seen X tails and Y heads in the past
 %prior = @(theta) normpdf(theta, 0.5, 0.1); % alternative -- Gaussian prior around 0.5
 
 fprintf('p(0.5) = %e\n', prior(0.5));
@@ -47,6 +48,15 @@ posterior = @(theta, d) likelihood(d, theta) * prior(theta) / marginalize(d, 0.0
 
 fprintf('p(0.5 | d) = %e\n', posterior(0.5, d));
 fprintf('p(0.3 | d) = %e\n', posterior(0.3, d));
+
+% for comparison, the posterior should equal Beta(heads + 1, tails + 1)
+% where Beta is the beta distribution.
+% This is only in the case of a uniform prior p(theta) = 1
+%
+Beta_posterior = @(theta, d) betapdf(theta, sum(d) + 1, length(d) - sum(d) + 1);
+
+fprintf('p(0.5) using Beta(heads + 1, tails + 1) = %e\n', Beta_posterior(0.5, d));
+fprintf('p(0.3) using Beta(heads + 1, tails + 1) = %e\n', Beta_posterior(0.3, d));
 
 % Maximum likelihood to find best theta
 %
