@@ -50,3 +50,7 @@ posterior = @(h, d) likelihood(d, h) * prior(h) / marginalize(d);
 
 fprintf('P(h1 | d) = %e\n', posterior(h1, d));
 fprintf('P(h2 | d) = %e\n', posterior(h2, d));
+
+% log posterior odds in favor of h1 (fair coin)
+%
+fprintf('log P(h1 | d) / P(h2 | d) = %f\n', log(posterior(h1, d) / posterior(h2, d)));
