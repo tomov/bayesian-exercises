@@ -1,6 +1,6 @@
-% Bayesian inference for coin flips
-% Infinitely many hypotheses -- infer probability of heads for given coin
-% using parameter estimation.
+% Bayesian inference for coin flips: Parameter estimation
+%
+% Infinitely many hypotheses -- infer probability of heads for given coin.
 %
 % Compare three methods:
 % 1) maximum likelihood
@@ -15,7 +15,7 @@ dtheta = 0.01;
 % Generative process
 % flip coin; probability of getting heads is theta
 %
-theta = 0.6; % = P(heads)
+theta = 0.9; % = P(heads)
 N = 20;
 d = rand(1, N) < theta; % sequence of coin flips
 disp(d)
@@ -30,9 +30,8 @@ fprintf('P(d | 0.3) = %e\n', likelihood(d, 0.3));
 % prior = p(theta)
 % note it's a PDF
 %
-prior = @(theta) 1; % uniform prior
-%prior = @(theta) betapdf(theta, 10, 10); % alterantive -- Beta distribution, as if we've seen X tails and Y heads in the past
-%prior = @(theta) normpdf(theta, 0.5, 0.1); % alternative -- Gaussian prior around 0.5
+%prior = @(theta) 1; % uniform prior
+prior = @(theta) betapdf(theta, 10, 10); % alterantive -- conjugate prior: Beta distribution, as if we've seen 10 heads and 10 tails in the past
 
 fprintf('p(0.5) = %e\n', prior(0.5));
 fprintf('p(0.3) = %e\n', prior(0.3));
@@ -81,3 +80,42 @@ fprintf('posterior mean theta = %e\n', theta_postmean);
 % Sanity check
 %
 fprintf('heads / (heads + tails) = %e\n', sum(d) / length(d)); % for comparison
+
+% Some plotting for prettyness
+%
+
+figure;
+thetas = 0:0.01:1;
+
+subplot(2, 2, 1);
+plot(thetas, arrayfun(@(theta) prior(theta), thetas), 'LineWidth', 2);
+xlabel('\theta');
+ylabel('p(\theta)');
+title('prior');
+
+subplot(2, 2, 2);
+plot(thetas, arrayfun(@(theta) likelihood(d, theta), thetas), 'LineWidth', 2);
+xlabel('\theta');
+ylabel('P(d | \theta)');
+title('likelihood');
+
+subplot(2, 2, 3);
+plot(thetas, arrayfun(@(theta) posterior(theta, d), thetas), 'LineWidth', 2);
+xlabel('\theta');
+ylabel('p(\theta | d)');
+title('posterior');
+
+subplot(2, 2, 4);
+bar([theta, sum(d) / length(d), theta_maxlik, theta_map, theta_postmean]);
+set(gca, 'xticklabel', {'true \theta', 'N_H / N', 'max lik', 'MAP', 'post mean'});
+ylabel('P(heads)');
+
+flips = '';
+for head = d
+    if head
+        flips = strcat(flips, 'H');
+    else
+        flips = strcat(flips, 'T');
+    end
+end
+subtitle(['d = ', flips]);

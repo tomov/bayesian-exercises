@@ -1,4 +1,5 @@
-% Bayesian inference for coin flips
+% Bayesian inference for coin flips: Comparing hypotheses
+%
 % Two simple hypotheses -- which one of two given coins is it?
 % Compute posterior probability of each hypothesis given a sequence of coin
 % flips
