@@ -45,8 +45,13 @@ g1.P_d_given_w0_w1 = @(d, w0, w1) ...
 
 
 % P(d | Graph 0) = integral P(d | w0, Graph 0) * P(Graph 0) * dw0
+% assumes uniform pdf for w0
+%
 g0.likelihood = @(d) sum(arrayfun(@(w0) g0.P_d_given_w0(d, w0) * g0.prior * dw0, 0:dw0:1));
+
 % P(d | Graph 1) = integral P(d | w0, w1, Graph 1) * P(Graph 1) * dw0 * dw1
+% assumes uniform independent pdfs for w0 and w1
+%
 g1.likelihood = @(d) sum(arrayfun(@(w0) sum(arrayfun(@(w1) g1.P_d_given_w0_w1(d, w0, w1) * g1.prior * dw0 * dw1, 0:dw1:1)), 0:dw0:1));
 
 fprintf('P(d | Graph 0) = %e\n', g0.likelihood(d));
