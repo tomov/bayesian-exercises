@@ -18,7 +18,7 @@ disp(d)
 h1 = struct;
 h2 = struct;
 
-h1.theta = 0.5; % candidate coin #1
+h1.theta = 0.5; % candidate coin #1 -- fair
 h2.theta = 0.9; % candidate coin #2
 
 h1.prior = 0.5; % prior P(h1) -- both coins are equally likely
